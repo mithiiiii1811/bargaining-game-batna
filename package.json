@@ -1,0 +1,16 @@
+{
+  "name": "bargaining-game-batna",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm:server\" \"npm:client\"",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build && npm --prefix server run build",
+    "start": "node server/dist/index.js",
+    "export:csv": "curl -o data.csv http://localhost:5174/admin/export"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
