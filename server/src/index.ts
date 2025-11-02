@@ -47,7 +47,6 @@ type SessionLog = {
 
 const sessions: Record<string, SessionLog> = {};
 
-const app = express();
 app.use(cors());
 
 app.get("/", (_req: Request, res: Response) => {
