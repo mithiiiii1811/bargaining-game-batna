@@ -4,14 +4,14 @@ import { App } from "./ui/App";
 import "./index.css";
 import { io } from "socket.io-client";
 
-const socket = io(
+const backendURL =
   import.meta.env.MODE === "development"
     ? "http://localhost:5174"
-    : "https://bargaining-game-batna-2.onrender.com",
-  {
-    transports: ["websocket"],
-  }
-);
+    : "https://bargaining-game-batna-2.onrender.com"; // your Render backend
+
+const socket = io(backendURL, {
+  transports: ["websocket"],
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 
