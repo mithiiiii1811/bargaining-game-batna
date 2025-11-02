@@ -1,5 +1,9 @@
 
-import express from "express";
+import express, { Request, Response } from "express";
+const app = express();
+
+
+//import express from "express";
 import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
@@ -46,7 +50,10 @@ const sessions: Record<string, SessionLog> = {};
 const app = express();
 app.use(cors());
 
-app.get("/", (_req, res) => res.send("BATNA server up"));
+app.get("/", (_req: Request, res: Response) => {
+  res.send("Server running");
+});
+
 
 app.get("/admin/export", (_req, res) => {
   // Export all sessions to CSV
