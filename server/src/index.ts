@@ -9,7 +9,27 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { stringify } from "csv-stringify/sync";
 
-const PORT = 5174;
+const PORT = process.env.PORT || 5174;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://bargaining-game-batna-mmid.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+  },
+});
 
 type GroupId = 1 | 2 | 3;
 type Role = "seller" | "buyer";
