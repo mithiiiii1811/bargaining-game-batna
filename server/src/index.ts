@@ -1,39 +1,13 @@
-
 import express, { Request, Response } from "express";
-const app = express();
-
-
-//import express from "express";
 import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { stringify } from "csv-stringify/sync";
 
+const app = express();
+
+// ✅ Render assigns a dynamic port → fallback to 5174 locally
 const PORT = process.env.PORT || 5174;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://bargaining-game-batna-mmid.vercel.app"
-];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
-
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-  },
-});
 
 type GroupId = 1 | 2 | 3;
 type Role = "seller" | "buyer";
@@ -45,7 +19,7 @@ const GROUPS: Record<GroupId, BATNAs> = {
   3: { seller: 30, buyer: 70 },
 };
 
-// In-memory state (demo purposes)
+// In-memory state
 const waitingQueues: Record<GroupId, string[]> = { 1: [], 2: [], 3: [] };
 const socketsGroup: Map<string, GroupId> = new Map();
 const socketsRoom: Map<string, string> = new Map();
@@ -77,9 +51,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("Server running");
 });
 
-
 app.get("/admin/export", (_req, res) => {
-  // Export all sessions to CSV
   const rows: any[] = [[
     "pair_id","group","start_ts","end_ts","deal","price","timeout",
     "seller_payoff","buyer_payoff","offers_json"
@@ -101,6 +73,11 @@ app.get("/admin/export", (_req, res) => {
   res.send(csv);
 });
 
+// ✅ Create HTTP + Socket.IO server
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
 
 function pairPlayers(group: GroupId) {
   const q = waitingQueues[group];
@@ -109,7 +86,6 @@ function pairPlayers(group: GroupId) {
     const b = q.shift()!;
     const pairId = `pair_${group}_${Date.now()}_${Math.floor(Math.random()*9999)}`;
 
-    // Randomly assign roles
     const roles: Role[] = Math.random() < 0.5 ? ["seller","buyer"] : ["buyer","seller"];
     const [roleA, roleB] = roles;
 
@@ -130,7 +106,6 @@ function pairPlayers(group: GroupId) {
     };
     sessions[pairId] = sess;
 
-    // Send private BATNAs
     const bats = GROUPS[group];
     io.to(a).emit("assigned", { pairId, group, role: roleA, batna: roleA === "seller" ? bats.seller : bats.buyer });
     io.to(b).emit("assigned", { pairId, group, role: roleB, batna: roleB === "seller" ? bats.seller : bats.buyer });
@@ -140,7 +115,6 @@ function pairPlayers(group: GroupId) {
 }
 
 io.on("connection", (socket) => {
-  // Client selects a group then waits
   socket.on("joinGroup", (group: GroupId) => {
     socketsGroup.set(socket.id, group);
     waitingQueues[group].push(socket.id);
@@ -165,7 +139,6 @@ io.on("connection", (socket) => {
     const sess = sessions[room];
     if (!sess || sess.result) return;
     const bats = GROUPS[sess.group];
-    // Price that was accepted decides payoffs
     const p = payload.price;
     sess.result = {
       deal: true,
@@ -197,7 +170,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const group = socketsGroup.get(socket.id);
     if (group) {
-      // remove from queue if waiting
       const q = waitingQueues[group];
       const idx = q.indexOf(socket.id);
       if (idx >= 0) q.splice(idx, 1);
@@ -205,6 +177,7 @@ io.on("connection", (socket) => {
   });
 });
 
+// ✅ Start server
 server.listen(PORT, () => {
-  console.log(`Server on http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
