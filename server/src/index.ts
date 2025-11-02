@@ -10,6 +10,10 @@ import { Server } from "socket.io";
 import { stringify } from "csv-stringify/sync";
 
 const PORT = process.env.PORT || 5174;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://bargaining-game-batna-mmid.vercel.app"
