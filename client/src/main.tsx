@@ -7,12 +7,10 @@ import { io } from "socket.io-client";
 const backendURL =
   import.meta.env.MODE === "development"
     ? "http://localhost:5174"
-    : "https://bargaining-game-batna-2.onrender.com"; // your Render backend
+    : "https://bargaining-game-batna-2.onrender.com";
 
-const socket = io(backendURL, {
+export const socket = io(backendURL, {
   transports: ["websocket"],
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
-
-export { socket };
