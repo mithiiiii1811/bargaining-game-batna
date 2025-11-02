@@ -1,6 +1,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { socket } from "../main";
+import type { Socket } from "socket.io-client";
 import { motion } from "framer-motion";
 import { Info } from "lucide-react";
 
