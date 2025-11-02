@@ -16,7 +16,7 @@ const SERVER_URL =
   import.meta.env.VITE_SERVER_URL ||
   (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:5174"
-    : `${window.location.protocol}//${window.location.host}`);
+     : "https://bargaining-game-batna-2.onrender.com");
 
 
 function MidpointCard() {
