@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { socket } from "../main";
+import { socket } from "../main"; // ✅ Use the shared socket instance
 import type { Socket } from "socket.io-client";
 import { motion } from "framer-motion";
 import { Info } from "lucide-react";
@@ -8,15 +8,21 @@ import { Info } from "lucide-react";
 type Role = "seller" | "buyer";
 type GroupId = 1 | 2 | 3;
 
-// 👇 Replace old SERVER_URL with this flexible version
+/**
+ * Optional: get the API URL from query string (?api=...)
+ * or use .env fallback for any REST fetch calls.
+ * (Note: Socket itself is imported from ../main, not recreated here.)
+ */
 const params = new URLSearchParams(window.location.search);
 const apiFromQuery = params.get("api");
 
-const SERVER_URL =
+export const SERVER_URL =
+  apiFromQuery ||
   import.meta.env.VITE_SERVER_URL ||
   (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:5174"
-     : "https://bargaining-game-batna-2.onrender.com");
+    : "https://bargaining-game-batna-2.onrender.com");
+
 
 
 function MidpointCard() {
