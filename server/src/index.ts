@@ -97,7 +97,6 @@ app.get("/admin/export", (_req, res) => {
   res.send(csv);
 });
 
-const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }
 });
