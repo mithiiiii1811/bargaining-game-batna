@@ -15,6 +15,7 @@ export const socket = io(backendURL, {
   transports: ["websocket"],
 });
 
+
 // Attach it to the window for debugging
 // (This line ensures window.socket exists)
 (window as any).socket = socket;
