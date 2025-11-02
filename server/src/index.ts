@@ -97,9 +97,6 @@ app.get("/admin/export", (_req, res) => {
   res.send(csv);
 });
 
-const io = new Server(server, {
-  cors: { origin: "*" }
-});
 
 function pairPlayers(group: GroupId) {
   const q = waitingQueues[group];
